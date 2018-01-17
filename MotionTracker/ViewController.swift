@@ -33,13 +33,22 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         self.chartView.chartDescription?.text = "Gyroscope data"
-        motionUpdates()
-        gyroScopeUpdate()
+        
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        motionUpdates()
+        gyroScopeUpdate()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        motionManager.stopGyroUpdates()
+        motionManager.stopDeviceMotionUpdates()
     }
     
     
