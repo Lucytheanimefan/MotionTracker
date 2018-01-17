@@ -24,7 +24,11 @@ class ViewController: UIViewController {
     var xlineChartEntry = [ChartDataEntry]()
     var ylineChartEntry = [ChartDataEntry]()
     var zlineChartEntry = [ChartDataEntry]()
+    
+    var doPlot:Bool = false
 
+    @IBOutlet weak var plotButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -36,6 +40,12 @@ class ViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    
+    @IBAction func startPlot(_ sender: UIButton) {
+        self.doPlot = !self.doPlot
+        self.plotButton.titleLabel?.text = (self.doPlot) ? "Stop" : "Start"
     }
     
     func motionUpdates(){
@@ -57,6 +67,9 @@ class ViewController: UIViewController {
             if let data = gyroData {
                 self.gyroTextView.text = "Rotation rate: \(data.rotationRate.x),\(data.rotationRate.y),\(data.rotationRate.z)"
                 
+                guard self.doPlot else {
+                    return
+                }
                 let xValue = ChartDataEntry(x: Double(self.xlineChartEntry.count), y: data.rotationRate.x)
                 let yValue = ChartDataEntry(x: Double(self.ylineChartEntry.count), y: data.rotationRate.y)
                 let zValue = ChartDataEntry(x: Double(self.zlineChartEntry.count), y: data.rotationRate.z)
