@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     let motionManager = CMMotionManager()
     
     let pedometer = CMPedometer()
-
+    
     @IBOutlet weak var textView: UITextView!
     
     @IBOutlet weak var chartLabel: UILabel!
@@ -53,7 +53,7 @@ class ViewController: UIViewController {
             }
         }
     }
-
+    
     private var _motionActive:Bool = false
     var motionActive:Bool {
         get{
@@ -92,35 +92,30 @@ class ViewController: UIViewController {
     var paceChartEntry = [ChartDataEntry]()
     var distanceChartEntry = [ChartDataEntry]()
     
-    var doPlot:Bool = false
-
+    var exportToCSV:Bool = false
+    
     @IBOutlet weak var plotButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        self.chartView.chartDescription?.text = "Gyroscope data"
+        self.chartView.chartDescription?.text = "Data"
         
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
     override func viewDidAppear(_ animated: Bool) {
-   
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         
     }
     
-    
-    @IBAction func startPlot(_ sender: UIButton) {
-        self.doPlot = !self.doPlot
-        self.plotButton.titleLabel?.text = (self.doPlot) ? "Stop" : "Start"
-    }
     
     @IBAction func tabBarTap(_ sender: UIBarButtonItem) {
         resetLineChartArrays()
@@ -131,6 +126,11 @@ class ViewController: UIViewController {
             self.motionFunctions[title]!()
         }
     }
+    
+    @IBAction func exportCSV(_ sender: UIButton) {
+        self.exportToCSV = true
+    }
+    
     
     func stopAllUpdates(){
         motionManager.stopGyroUpdates()
@@ -154,7 +154,7 @@ class ViewController: UIViewController {
                 self.ylineChartEntry.append(yValue)
                 self.zlineChartEntry.append(zValue)
                 
-                self.updateChart(dataEntries: [self.xlineChartEntry, self.ylineChartEntry, self.zlineChartEntry], colors: [NSUIColor.blue, NSUIColor.green, NSUIColor.red], labels: ["X", "Y", "Z"])
+                self.updateChart(dataEntries: [self.xlineChartEntry, self.ylineChartEntry, self.zlineChartEntry], colors: [NSUIColor.blue, NSUIColor.green, NSUIColor.red], labels: ["X", "Y", "Z"], fileName: "accelerometer")
                 
                 self.textView.text = "Acceleration: \(x),\(y),\(z)"
             }
@@ -176,8 +176,12 @@ class ViewController: UIViewController {
                     self.paceChartEntry.append(paceV)
                     self.distanceChartEntry.append(distanceV)
                     
-                    self.updateChart(dataEntries: [self.cadenceChartEntry, self.paceChartEntry, self.distanceChartEntry], colors: [NSUIColor.blue, NSUIColor.green, NSUIColor.red], labels: ["Cadence", "Pace", "Distance"])
+                    self.updateChart(dataEntries: [self.cadenceChartEntry, self.paceChartEntry, self.distanceChartEntry], colors: [NSUIColor.blue, NSUIColor.green, NSUIColor.red], labels: ["Cadence", "Pace", "Distance"], fileName: "pedometer")
                 }
+            }
+            else
+            {
+                self.chartView.data = nil
             }
         }
     }
@@ -195,7 +199,7 @@ class ViewController: UIViewController {
     }
     
     func gyroScopeUpdate() -> Void{
-       
+        
         motionManager.gyroUpdateInterval = TimeInterval(Constants.updateInterval) // every 5 seconds
         motionManager.startGyroUpdates(to: OperationQueue.current!) { (gyroData, error) in
             if let data = gyroData {
@@ -208,12 +212,12 @@ class ViewController: UIViewController {
                 self.ylineChartEntry.append(yValue)
                 self.zlineChartEntry.append(zValue)
                 
-                self.updateChart(dataEntries: [self.xlineChartEntry, self.ylineChartEntry, self.zlineChartEntry], colors: [NSUIColor.blue, NSUIColor.green, NSUIColor.red], labels: ["X", "Y", "Z"])
+                self.updateChart(dataEntries: [self.xlineChartEntry, self.ylineChartEntry, self.zlineChartEntry], colors: [NSUIColor.blue, NSUIColor.green, NSUIColor.red], labels: ["X", "Y", "Z"],fileName: "gyroscope")
             }
         }
     }
     
-    func updateChart(dataEntries:[[ChartDataEntry]], colors: [NSUIColor], labels: [String]?){
+    func updateChart(dataEntries:[[ChartDataEntry]], colors: [NSUIColor], labels: [String]?, fileName:String="motionTrackerData"){
         guard dataEntries.count == colors.count else {
             return
         }
@@ -223,6 +227,21 @@ class ViewController: UIViewController {
             let line = LineChartDataSet(values: data, label: label)
             line.colors = [colors[i]]
             chartData.addDataSet(line)
+            
+            // Write to CSV
+            let stringifiedData = data.map({ (dataEntry) -> String in
+                return dataEntry.description
+            })
+            
+            let pathToFile = CSVWriter.writeArrayToFile(array: stringifiedData, fileName: fileName)
+            
+            if (self.exportToCSV)
+            {
+                if let path = pathToFile{
+                    let vc = UIActivityViewController(activityItems: [path], applicationActivities: [])
+                    self.present(vc, animated: true, completion: nil)
+                }
+            }
         }
         self.chartView.data = chartData
     }
@@ -254,7 +273,7 @@ class ViewController: UIViewController {
         self.pitchChartEntry.append(pitchV)
         self.yawChartEntry.append(yawV)
         
-        self.updateChart(dataEntries: [self.rollChartEntry, self.pitchChartEntry, self.yawChartEntry], colors: [NSUIColor.blue, NSUIColor.green, NSUIColor.red], labels: ["Roll", "Pitch", "Yaw"])
+        self.updateChart(dataEntries: [self.rollChartEntry, self.pitchChartEntry, self.yawChartEntry], colors: [NSUIColor.blue, NSUIColor.green, NSUIColor.red], labels: ["Roll", "Pitch", "Yaw"],fileName: "deviceMotion")
         
         self.textView.text = "Roll: \(roll), Pitch: \(pitch), Yaw: \(yaw)"
     }
@@ -262,6 +281,6 @@ class ViewController: UIViewController {
     func degrees(radians:Double) -> Double {
         return 180 / .pi * radians
     }
-
+    
 }
 

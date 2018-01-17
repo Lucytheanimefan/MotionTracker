@@ -15,6 +15,7 @@
 		7C609D17200F05CE00081F4E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7C609D15200F05CE00081F4E /* LaunchScreen.storyboard */; };
 		7C609D22200F05CE00081F4E /* MotionTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C609D21200F05CE00081F4E /* MotionTrackerTests.swift */; };
 		7C609D2D200FAAB600081F4E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C609D2C200FAAB600081F4E /* Constants.swift */; };
+		7CAABA98200FD53600B58B0E /* CSVWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CAABA97200FD53600B58B0E /* CSVWriter.swift */; };
 		D3E32D4C3BF9EE528A68F142 /* Pods_MotionTrackerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 000EC2F2A30763B8D7C7210F /* Pods_MotionTrackerTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -55,6 +56,7 @@
 		7C609D21200F05CE00081F4E /* MotionTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionTrackerTests.swift; sourceTree = "<group>"; };
 		7C609D23200F05CE00081F4E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7C609D2C200FAAB600081F4E /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		7CAABA97200FD53600B58B0E /* CSVWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVWriter.swift; sourceTree = "<group>"; };
 		82EAFD8534E692E45A64AA94 /* Pods-MotionTracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MotionTracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MotionTracker/Pods-MotionTracker.debug.xcconfig"; sourceTree = "<group>"; };
 		E5FDA29671AD011EBAD88EC2 /* Pods-MotionTracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MotionTracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-MotionTracker/Pods-MotionTracker.release.xcconfig"; sourceTree = "<group>"; };
 		ECE03339043ADA11C5614E8E /* Pods_MotionTracker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MotionTracker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -131,6 +133,7 @@
 				7C609D15200F05CE00081F4E /* LaunchScreen.storyboard */,
 				7C609D18200F05CE00081F4E /* Info.plist */,
 				7C609D2C200FAAB600081F4E /* Constants.swift */,
+				7CAABA97200FD53600B58B0E /* CSVWriter.swift */,
 			);
 			path = MotionTracker;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				7C609D0F200F05CE00081F4E /* ViewController.swift in Sources */,
 				7C609D0D200F05CE00081F4E /* AppDelegate.swift in Sources */,
 				7C609D2D200FAAB600081F4E /* Constants.swift in Sources */,
+				7CAABA98200FD53600B58B0E /* CSVWriter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
