@@ -15,10 +15,15 @@ class ViewController: UIViewController {
     let motionManager = CMMotionManager()
 
     @IBOutlet weak var textView: UITextView!
+    
+    
+    @IBOutlet weak var gyroTextView: UITextView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         motionUpdates()
+        gyroScopeUpdate()
     }
 
     override func didReceiveMemoryWarning() {
@@ -27,6 +32,7 @@ class ViewController: UIViewController {
     }
     
     func motionUpdates(){
+        motionManager.deviceMotionUpdateInterval = TimeInterval(Constants.updateInterval)
         motionManager.startDeviceMotionUpdates(to: OperationQueue.current!) { (deviceMotion, error) in
             guard error == nil else {
                 return
@@ -36,6 +42,16 @@ class ViewController: UIViewController {
             self.handleDeviceMotionUpdate(deviceMotion: deviceMotion!)
         }
     }
+    
+    func gyroScopeUpdate(){
+        motionManager.gyroUpdateInterval = TimeInterval(Constants.updateInterval) // every 5 seconds
+        motionManager.startGyroUpdates(to: OperationQueue.current!) { (gyroData, error) in
+            if let data = gyroData {
+                self.gyroTextView.text = "Rotation rate: \(data.rotationRate.x),\(data.rotationRate.y),\(data.rotationRate.z)"
+            }
+        }
+    }
+    
     func handleDeviceMotionUpdate(deviceMotion:CMDeviceMotion) {
         let attitude = deviceMotion.attitude
         let roll = degrees(radians: attitude.roll)
