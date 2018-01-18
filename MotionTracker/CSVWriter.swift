@@ -11,15 +11,18 @@ import os.log
 
 class CSVWriter: NSObject {
     
-    class func writeArrayToFile(array:[String], fileName:String) -> URL?{
+    class func writeArrayToFile(array:[String], fileName:String) -> URL?
+    {
         let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
         let csvText = "Date written: \(Date())\n\(array.joined(separator: ","))"
-        do {
+        do
+        {
             try csvText.write(to: path!, atomically: true, encoding: String.Encoding.utf8)
-        } catch {
+        }
+        catch
+        {
             os_log("%@: Failed to create file: %@", type: .error, self.description(), error.localizedDescription)
         }
         return path
     }
-
 }

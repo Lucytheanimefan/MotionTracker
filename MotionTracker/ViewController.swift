@@ -28,8 +28,9 @@ class ViewController: UIViewController {
     var exportFilePath:URL!
     
     typealias myFunc = () -> Void
-    lazy var motionFunctions:[String: myFunc] = {
-        return ["Gyroscope": gyroScopeUpdate, "Pedometer": pedometerUpdates, "Motion": motionUpdates, "Accel": accelUpdates]
+    lazy var motionFunctions:[String: myFunc] =
+        {
+            return ["Gyroscope": gyroScopeUpdate, "Pedometer": pedometerUpdates, "Motion": motionUpdates, "Accel": accelUpdates]
     }()
     
     var xlineChartEntry = [ChartDataEntry]()
@@ -70,18 +71,19 @@ class ViewController: UIViewController {
     @IBAction func tabBarTap(_ sender: UIBarButtonItem) {
         self.fileNameField.isUserInteractionEnabled = true
         resetLineChartArrays()
-        if let title = sender.title{
+        if let title = sender.title {
             stopAllUpdates()
             self.chartLabel.text = title
         }
     }
     
     @IBAction func exportCSV(_ sender: UIButton) {
-        if (self.exportFilePath != nil)
-        {
-            let vc = UIActivityViewController(activityItems: [self.exportFilePath], applicationActivities: [])
-            self.present(vc, animated: true, completion: nil)
+        guard self.exportFilePath != nil else {
+            return
         }
+        
+        let vc = UIActivityViewController(activityItems: [self.exportFilePath], applicationActivities: [])
+        self.present(vc, animated: true, completion: nil)
     }
     
     @IBAction func stop(_ sender: UIButton) {
@@ -107,7 +109,7 @@ class ViewController: UIViewController {
     func accelUpdates(){
         motionManager.accelerometerUpdateInterval = Constants.updateInterval
         motionManager.startAccelerometerUpdates(to: OperationQueue.current!) { (accelerometerData, error) in
-            if let data = accelerometerData{
+            if let data = accelerometerData {
                 let x = data.acceleration.x
                 let y = data.acceleration.y
                 let z = data.acceleration.z
@@ -201,8 +203,7 @@ class ViewController: UIViewController {
             let filePrefix = (self.fileNameField.text != nil) ? "\(self.fileNameField.text!)_" : ""
         
             self.exportFilePath = CSVWriter.writeArrayToFile(array: stringifiedData, fileName: "\(filePrefix)\(fileName)")
-            
-            
+
         }
         self.chartView.data = chartData
     }
