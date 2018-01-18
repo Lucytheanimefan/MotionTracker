@@ -17,6 +17,8 @@ class ViewController: UIViewController {
     
     let pedometer = CMPedometer()
     
+    @IBOutlet weak var fileNameField: UITextField!
+    
     @IBOutlet weak var textView: UITextView!
     
     @IBOutlet weak var chartLabel: UILabel!
@@ -233,7 +235,9 @@ class ViewController: UIViewController {
                 return dataEntry.description
             })
             
-            let pathToFile = CSVWriter.writeArrayToFile(array: stringifiedData, fileName: fileName)
+            let filePrefix = (self.fileNameField.text != nil) ? "\(self.fileNameField.text!)_" : ""
+        
+            let pathToFile = CSVWriter.writeArrayToFile(array: stringifiedData, fileName: "\(filePrefix)\(fileName)")
             
             if (self.exportToCSV)
             {
