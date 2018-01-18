@@ -25,57 +25,6 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var chartView: LineChartView!
     
-    private var _gyroActive:Bool = false
-    var gyroActive:Bool {
-        get{
-            return self._gyroActive
-        }
-        set{
-            self._gyroActive = newValue
-            if (self._gyroActive){
-                self.pedomActive = false
-                self.motionActive = false
-                stopAllUpdates()
-                gyroScopeUpdate()
-            }
-        }
-    }
-    private var _pedomActive:Bool = false
-    var pedomActive:Bool {
-        get{
-            return self._pedomActive
-        }
-        set{
-            self._pedomActive = newValue
-            if (self._pedomActive){
-                self.gyroActive = false
-                self.motionActive = false
-                stopAllUpdates()
-                pedometerUpdates()
-            }
-        }
-    }
-    
-    private var _motionActive:Bool = false
-    var motionActive:Bool {
-        get{
-            return self._motionActive
-        }
-        set{
-            self._motionActive = newValue
-            if (self._motionActive){
-                self.gyroActive = false
-                self.pedomActive = false
-                stopAllUpdates()
-                motionUpdates()
-            }
-        }
-    }
-    
-    lazy var plots:[String:Bool] =
-        {
-            return ["Gyroscope": self.gyroActive, "Pedometer": self.pedomActive, "Motion": self.motionActive]
-    }()
     
     typealias myFunc = () -> Void
     lazy var motionFunctions:[String: myFunc] = {
@@ -123,7 +72,6 @@ class ViewController: UIViewController {
         resetLineChartArrays()
         if let title = sender.title{
             stopAllUpdates()
-            //self.plots[title] = true
             self.chartLabel.text = title
             self.motionFunctions[title]!()
         }
@@ -131,6 +79,10 @@ class ViewController: UIViewController {
     
     @IBAction func exportCSV(_ sender: UIButton) {
         self.exportToCSV = true
+    }
+    
+    @IBAction func stop(_ sender: UIButton) {
+        self.stopAllUpdates()
     }
     
     
