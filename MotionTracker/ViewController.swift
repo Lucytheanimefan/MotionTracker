@@ -25,6 +25,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var chartView: LineChartView!
     
+    var exportFilePath:URL!
     
     typealias myFunc = () -> Void
     lazy var motionFunctions:[String: myFunc] = {
@@ -59,32 +60,42 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        
-    }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        self.fileNameField.endEditing(true)
     }
     
     
     @IBAction func tabBarTap(_ sender: UIBarButtonItem) {
+        self.fileNameField.isUserInteractionEnabled = true
         resetLineChartArrays()
         if let title = sender.title{
             stopAllUpdates()
             self.chartLabel.text = title
-            self.motionFunctions[title]!()
         }
     }
     
     @IBAction func exportCSV(_ sender: UIButton) {
-        self.exportToCSV = true
+        if (self.exportFilePath != nil)
+        {
+            let vc = UIActivityViewController(activityItems: [self.exportFilePath], applicationActivities: [])
+            self.present(vc, animated: true, completion: nil)
+        }
     }
     
     @IBAction func stop(_ sender: UIButton) {
         self.stopAllUpdates()
+        self.resetLineChartArrays()
+        self.resetChart()
     }
     
+    @IBAction func start(_ sender: UIButton) {
+        self.fileNameField.isUserInteractionEnabled = true
+        if let title = self.chartLabel.text{
+            self.motionFunctions[title]!()
+        }
+    }
     
     func stopAllUpdates(){
         motionManager.stopGyroUpdates()
@@ -189,15 +200,9 @@ class ViewController: UIViewController {
             
             let filePrefix = (self.fileNameField.text != nil) ? "\(self.fileNameField.text!)_" : ""
         
-            let pathToFile = CSVWriter.writeArrayToFile(array: stringifiedData, fileName: "\(filePrefix)\(fileName)")
+            self.exportFilePath = CSVWriter.writeArrayToFile(array: stringifiedData, fileName: "\(filePrefix)\(fileName)")
             
-            if (self.exportToCSV)
-            {
-                if let path = pathToFile{
-                    let vc = UIActivityViewController(activityItems: [path], applicationActivities: [])
-                    self.present(vc, animated: true, completion: nil)
-                }
-            }
+            
         }
         self.chartView.data = chartData
     }
@@ -214,6 +219,10 @@ class ViewController: UIViewController {
         self.cadenceChartEntry.removeAll()
         self.paceChartEntry.removeAll()
         self.distanceChartEntry.removeAll()
+    }
+    
+    func resetChart(){
+        self.chartView.data = nil
     }
     
     func handleDeviceMotionUpdate(deviceMotion:CMDeviceMotion) {
