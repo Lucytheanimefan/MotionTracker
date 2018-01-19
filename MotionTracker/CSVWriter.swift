@@ -13,6 +13,7 @@ class CSVWriter: NSObject {
     
     class func writeArrayToFile(array:[String], fileName:String) -> URL?
     {
+        print("Filename: \(fileName)")
         let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
         let csvText = "Date written: \(Date())\n\(array.joined(separator: ","))"
         do

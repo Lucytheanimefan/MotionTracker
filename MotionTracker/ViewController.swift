@@ -25,7 +25,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var chartView: LineChartView!
     
-    var exportFilePath:URL!
+    var exportFilePaths:[URL]! = [URL]()
     
     typealias myFunc = () -> Void
     lazy var motionFunctions:[String: myFunc] =
@@ -78,22 +78,23 @@ class ViewController: UIViewController {
     }
     
     @IBAction func exportCSV(_ sender: UIButton) {
-        guard self.exportFilePath != nil else {
+        guard self.exportFilePaths.count > 0 else {
             return
         }
         
-        let vc = UIActivityViewController(activityItems: [self.exportFilePath], applicationActivities: [])
+        let vc = UIActivityViewController(activityItems: self.exportFilePaths, applicationActivities: [])
         self.present(vc, animated: true, completion: nil)
     }
     
     @IBAction func stop(_ sender: UIButton) {
+        self.fileNameField.isUserInteractionEnabled = true
         self.stopAllUpdates()
         self.resetLineChartArrays()
         self.resetChart()
     }
     
     @IBAction func start(_ sender: UIButton) {
-        self.fileNameField.isUserInteractionEnabled = true
+        self.fileNameField.isUserInteractionEnabled = false
         if let title = self.chartLabel.text{
             self.motionFunctions[title]!()
         }
@@ -197,13 +198,16 @@ class ViewController: UIViewController {
             
             // Write to CSV
             let stringifiedData = data.map({ (dataEntry) -> String in
-                return dataEntry.description
+                return dataEntry.y.description
             })
             
             let filePrefix = (self.fileNameField.text != nil) ? "\(self.fileNameField.text!)_" : ""
-        
-            self.exportFilePath = CSVWriter.writeArrayToFile(array: stringifiedData, fileName: "\(filePrefix)\(fileName)")
-
+            
+            if let fileURL = CSVWriter.writeArrayToFile(array: stringifiedData, fileName: "\(filePrefix)\(label)_\(fileName)")
+            {
+                self.exportFilePaths.append(fileURL)
+            }
+            
         }
         self.chartView.data = chartData
     }
